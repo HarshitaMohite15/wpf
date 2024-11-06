@@ -1,0 +1,39 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AssemblyName>TargetFramework.Tests</AssemblyName>
+    <TargetFramework>net9.0</TargetFramework>
+    <!--<ImplicitUsings>enable</ImplicitUsings>-->
+   <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <!--<GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>-->   
+    <Platforms>AnyCPU;x64;x86;ARM64</Platforms>  
+    <!-- SYSLIB5005: System.Formats.Nrbf is experimental -->
+    <NoWarn>$(NoWarn);SYSLIB5005</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" Version="6.0.2" />
+    <!--<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />-->
+    <PackageReference Include="xunit" Version="2.9.0" />
+    <!--<PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />-->
+    <PackageReference Include="NUnit" Version="3.13.3" />
+    <PackageReference Include="NUnit3TestAdapter" Version="4.2.1" />
+    <PackageReference Include="NUnit.Analyzers" Version="3.6.1" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Moq" Version="$(MoqPackageVersion)" />
+    <PackageReference Include="coverlet.msbuild" Version="$(CoverletMSBuildPackageVersion)" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\src\WPFProjectGenerator\WPFProjectGenerator.csproj" />
+  </ItemGroup>
+
+  <!--<ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>-->
+
+</Project>
