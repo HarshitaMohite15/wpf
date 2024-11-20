@@ -8,24 +8,40 @@ using System.Diagnostics;
 string projectName;
 string targetFramework;
 string[] tfmName;
-//string projectName = "TestSampleWPFNET8";
-//string targetFramework = "net8.0";
-var value = "net5.0;net6.0;net7.0;net8.0;net9.0" ?? string.Empty;
-var allTFMs = new List<string>(value.Split(';'));
 
-//var allTFMs = new List<string>(ConfigurationManager.AppSettings["tfms"].Split(';'));
+List<string>? allTFMs = null;
 
-if (allTFMs.Count > 0)
+string? tfmsValue = ConfigurationManager.AppSettings["tfms"];
+
+if (string.IsNullOrEmpty(tfmsValue))
 {
-    for (int i = 0; i < allTFMs.Count; i++)
+    Console.WriteLine("The 'tfms' key is missing or has no value.");
+}
+else
+{
+    allTFMs = [.. tfmsValue.Split(';')];
+}
+if (allTFMs != null)
+{
+    if (allTFMs.Count > 0)
     {
-        tfmName = allTFMs[i].Split('.');
-        projectName = "TestSampleWPF" + tfmName[0].ToString().ToUpper();
-        targetFramework = allTFMs[i];
-        // Create the project
-        CreateProject(projectName, targetFramework);
+        string rootPath = Directory.GetCurrentDirectory() + "TFMProjects";
+        if ((Directory.Exists(rootPath)))
+        {
+            Directory.Delete(rootPath, true);
+            Directory.CreateDirectory(rootPath);
+        }
+        for (int i = 0; i < allTFMs.Count; i++)
+        {
+            tfmName = allTFMs[i].Split('.');
+            projectName = "TestSampleWPF" + tfmName[0].ToString().ToUpper();
+            targetFramework = allTFMs[i];
+            // Create the project
+            CreateProject(projectName, targetFramework);
+        }
     }
 }
+
 
 
 static void CreateProject(string projectName, string targetFramework)
@@ -36,6 +52,7 @@ static void CreateProject(string projectName, string targetFramework)
     {
         Directory.CreateDirectory(rootPath);
     }
+
 
     string projectPath = Path.Combine(rootPath, projectName);
 
