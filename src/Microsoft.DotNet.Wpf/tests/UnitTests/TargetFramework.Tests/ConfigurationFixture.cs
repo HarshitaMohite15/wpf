@@ -14,12 +14,10 @@ namespace TargetFramework.Tests
 
         public ConfigurationFixture()
         {        // Set up the configuration
-                 var builder = new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory())  // Use the current directory
-                                                           .AddJsonFile("app.json", optional: false, reloadOnChange: true);
-            // Add your appsettings.json
-
-        Configuration = builder.Build(); // Build the configuration
+            IConfigurationBuilder builder = new ConfigurationBuilder()
+                            .SetBasePath(Directory.GetCurrentDirectory())  // Use the current directory
+                            .AddJsonFile("app.json", optional: false, reloadOnChange: true); // Add your appsettings.json
+            Configuration = builder.Build(); // Build the configuration
         }
     }
 }

@@ -63,7 +63,7 @@ static void CreateProject(string projectName, string targetFramework)
     string createProjectCommand = $"dotnet new wpf -n {projectName} --framework {targetFramework}";
 
     // Start the process to create the project
-    ProcessStartInfo startInfo = new ProcessStartInfo("cmd", "/c " + createProjectCommand)
+    ProcessStartInfo startInfo = new("cmd", "/c " + createProjectCommand)
     {
         WorkingDirectory = projectPath,
         RedirectStandardOutput = true,

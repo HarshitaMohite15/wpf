@@ -15,24 +15,36 @@ namespace TargetFramework.Tests
     ordererAssemblyName: "TargetFramework.Tests")]
     public class XUnitTest : IClassFixture<ConfigurationFixture>
     {
-        //private const string WpfProjectDirectory = "C:\\Users\\v-vmb\\source\\repos\\TFMWpfRelease9\\artifacts\\bin\\TargetFramework.Tests\\Debug\\net9.0TFMProjects";
-        //private string appPath = "C:\\Users\\v-vmb\\source\\repos\\TFMWpfRelease9\\artifacts\\bin\\WPFProjectGenerator\\Debug\\net9.0\\WPFProjectGenerator.exe";
-
-        private readonly IConfiguration _configuration;
+        private readonly IConfiguration? _configuration;
         private static string? s_wpfProjectDirectory;
-        readonly string? _appPath;
+        private readonly string? _appPath;
+        private static string? s_newTargetFramework;
+        private readonly string? _currentDir;
         public XUnitTest(ConfigurationFixture configFixture)
         {
             _configuration = configFixture.Configuration;
-            s_wpfProjectDirectory = _configuration["WpfProjectDirectory"];
-            _appPath = _configuration["appPath"];
+            if (_configuration != null)
+            {
+                _currentDir = Directory.GetCurrentDirectory();
+                s_wpfProjectDirectory = _configuration["WpfProjectDirectory"];
+                if (s_wpfProjectDirectory != null && _currentDir != null)
+                {
+                    DirectoryInfo? parentDir = Directory.GetParent(_currentDir);
+                    s_wpfProjectDirectory = parentDir + s_wpfProjectDirectory;
+                }
+                _appPath = _configuration["appPath"];
+                if (_appPath != null)
+                {
+                    _appPath = _currentDir + _appPath;
+                }
+                s_newTargetFramework = _configuration["latestTargetFramework"];
+            }
         }
-        
+
+        //Create projects with different TFMs
         [Fact]
         public void A_StartTest()
         {
-
-
             var process = new Process
             {
                 StartInfo = new ProcessStartInfo
@@ -41,17 +53,15 @@ namespace TargetFramework.Tests
                     UseShellExecute = true,
                 }
             };
-
             process.Start();
-
             // Optionally wait for a moment to ensure the app is up
             Thread.Sleep(2000);
-
             Assert.False(process.HasExited);
             process.WaitForExit();
             process.Kill();
         }
 
+        //Publish the projects created with different TFMs
         [Theory]
         [MemberData(nameof(GetTestCases))]
         public void B_Publish(string filename)
@@ -92,6 +102,7 @@ namespace TargetFramework.Tests
             Assert.Empty(error);
         }
 
+        //Run the projects created with different TFMs
         [Theory]
         [MemberData(nameof(GetTestCases))]
         public void C_Launch(string filename)
@@ -129,6 +140,7 @@ namespace TargetFramework.Tests
             process.Kill();
         }
 
+        //Publish the projects created with different TFMs after changing the to latest TFM
         [Theory]
         [MemberData(nameof(GetTestCases))]
         public void D_PublishAfterTFMChange(string filename)
@@ -171,6 +183,7 @@ namespace TargetFramework.Tests
             Assert.Empty(error);
         }
 
+        //Run the projects created with different TFMs after changing the to latest TFM
         [Theory]
         [MemberData(nameof(GetTestCases))]
         public void E_LaunchAfterTFMChange(string filename)
@@ -209,9 +222,9 @@ namespace TargetFramework.Tests
             process.Kill();
         }
 
+        //Change the TFM to latest version of .Net
         static void ChangeTargetFramework(string WpfProjectPath)
         {
-            string newTargetFramework = "net9.0-windows";
             if (!File.Exists(WpfProjectPath))
             {
                 Console.WriteLine("Project file not found.");
@@ -222,27 +235,29 @@ namespace TargetFramework.Tests
             XDocument doc = XDocument.Load(WpfProjectPath);
             XElement? propertyGroup = doc.Descendants("PropertyGroup").FirstOrDefault();
 
-            if (propertyGroup != null)
+            if (propertyGroup != null && s_newTargetFramework != null)
             {
-                var targetFrameworkElement = propertyGroup.Elements("TargetFramework").FirstOrDefault();
+                XElement? targetFrameworkElement = propertyGroup.Elements("TargetFramework").FirstOrDefault();
                 if (targetFrameworkElement != null)
                 {
-                    targetFrameworkElement.Value = newTargetFramework;
+                    targetFrameworkElement.Value = s_newTargetFramework;
                 }
                 else
                 {
-                    propertyGroup.Add(new XElement("TargetFramework", newTargetFramework));
+                    propertyGroup.Add(new XElement("TargetFramework", s_newTargetFramework));
                 }
 
                 // Save the changes
                 doc.Save(WpfProjectPath);
-                Console.WriteLine($"Target framework changed to '{newTargetFramework}' in '{WpfProjectPath}'.");
+                Console.WriteLine($"Target framework changed to '{s_newTargetFramework}' in '{WpfProjectPath}'.");
             }
             else
             {
                 Console.WriteLine("No PropertyGroup found in the project file.");
             }
         }
+
+        //Get the list of project path for the created versions.
         public static IEnumerable<object[]> GetTestCases()
         {
             if (s_wpfProjectDirectory != null)
@@ -254,8 +269,5 @@ namespace TargetFramework.Tests
             }
 
         }
-
-
-
     }
 }

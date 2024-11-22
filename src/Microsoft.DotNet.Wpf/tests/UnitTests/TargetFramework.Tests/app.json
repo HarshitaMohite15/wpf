@@ -1,4 +1,5 @@
 {
-    "appPath": "C:\\Users\\v-vmb\\source\\repos\\TFMWpfRelease9\\artifacts\\bin\\WPFProjectGenerator\\Debug\\net9.0\\WPFProjectGenerator.exe",
-    "WpfProjectDirectory": "C:\\Users\\v-vmb\\source\\repos\\TFMWpfRelease9\\artifacts\\bin\\TargetFramework.Tests\\Debug\\net9.0TFMProjects"
+    "appPath": "\\WPFProjectGenerator.exe",
+    "WpfProjectDirectory": "\\net9.0TFMProjects",
+    "latestTargetFramework": "net9.0-windows"
 }
