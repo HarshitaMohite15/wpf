@@ -1,4 +1,4 @@
-// Licensed to the .NET Foundation under one or more agreements.
+﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
@@ -68,7 +68,7 @@ namespace System.Xaml
         {
             AssemblyName name = new AssemblyName(assembly.FullName);
             string partialName = name.Name;
-            return (partialName != null) ? partialName : string.Empty;
+            return partialName ?? string.Empty;
         }
 #endif
 
@@ -84,8 +84,10 @@ namespace System.Xaml
                                     Assembly protoAssembly,
                                     string partialName)
         {
-            AssemblyName name = new AssemblyName(protoAssembly.FullName);
-            name.Name = partialName;
+            AssemblyName name = new AssemblyName(protoAssembly.FullName)
+            {
+                Name = partialName
+            };
             return name.FullName;
         }
 
@@ -151,6 +153,7 @@ namespace System.Xaml
                     return assemblies[i];
                 }
             }
+
             return null;
         }
 
@@ -165,12 +168,13 @@ namespace System.Xaml
                     _assemblies = new Dictionary<object, AssemblyName>();
                 }
                 else
-	            {
+                {
                     if (_assemblies.TryGetValue(key, out result))
                     {
                         return result;
                     }
-	            }
+                }
+
                 //
                 // We use AssemblyName ctor here because GetName demands FileIOPermission
                 // and does load more than just the required information.
@@ -185,6 +189,7 @@ namespace System.Xaml
                     GCNotificationToken.RegisterCallback(_cleanupCollectedAssemblies, null);
                     _isGCCallbackPending  = true;
                 }
+
                 return result;
             }
         }
@@ -198,11 +203,11 @@ namespace System.Xaml
             {
                 foreach (object key in _assemblies.Keys)
                 {
-                    WeakReference weakRef = key as WeakReference;
-                    if (weakRef is null)
+                    if (key is not WeakReference weakRef)
                     {
                         continue;
                     }
+
                     if (weakRef.IsAlive)
                     {
                         // There is a weak ref that is still alive, register another GC callback for next time
@@ -215,9 +220,11 @@ namespace System.Xaml
                         {
                             keysToRemove = new List<object>();
                         }
+
                         keysToRemove.Add(key);
                     }
                 }
+
                 if (keysToRemove is not null)
                 {
                     foreach (object key in keysToRemove)
@@ -225,6 +232,7 @@ namespace System.Xaml
                         _assemblies.Remove(key);
                     }
                 }
+
                 if (foundLiveDynamicAssemblies)
                 {
                     GCNotificationToken.RegisterCallback(_cleanupCollectedAssemblies, null);
@@ -278,19 +286,6 @@ namespace System.Xaml
         }
 #endif //!REACHFRAMEWORK
 
-#if PRESENTATION_CORE
-
-        /// <summary>
-        ///     This function is a wrapper for CultureInfo.GetCultureInfoByIetfLanguageTag().
-        ///     The wrapper works around a bug in that routine, which causes it to throw
-        ///     a SecurityException in Partial Trust.
-        /// </summary>
-        static internal CultureInfo GetCultureInfoByIetfLanguageTag(string languageTag)
-        {
-            return CultureInfo.GetCultureInfoByIetfLanguageTag(languageTag);
-        }
-#endif //PRESENTATIONCORE
-
         internal const string IMAGE = "image";
     }
 
@@ -324,6 +319,7 @@ namespace System.Xaml
                     return (target1 == target2);
                 }
             }
+
             return base.Equals(o);
         }
 
@@ -333,6 +329,7 @@ namespace System.Xaml
             {
                 return object.ReferenceEquals(right, null);
             }
+
             return left.Equals(right);
         }
 
