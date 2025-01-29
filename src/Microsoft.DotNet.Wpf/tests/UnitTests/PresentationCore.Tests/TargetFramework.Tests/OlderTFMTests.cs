@@ -379,6 +379,8 @@ namespace PresentationCore.Tests.TargetFramework.Tests
                 return output.Contains(requiredSdkVersion);
             }
         }
-        
+        private static void ChangeTargetFramework(string WpfProjectPath)
+        {
+        }
     }
 }
