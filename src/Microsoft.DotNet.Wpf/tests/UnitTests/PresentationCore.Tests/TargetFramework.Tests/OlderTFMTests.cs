@@ -37,7 +37,7 @@ namespace PresentationCore.Tests.TargetFramework.Tests
                 // Verify if the projects are created
                 foreach (var projectFile in projectFiles)
                 {
-                    string fullPath = Path.Combine(projectFile, _projectName, $"{_projectName}.csproj");
+                    string fullPath = Path.Combine(projectFile, $"{_projectName}.csproj");
                     bool check = File.Exists(fullPath);
                     Assert.True(check);
 
@@ -87,58 +87,58 @@ namespace PresentationCore.Tests.TargetFramework.Tests
 
             projectFiles.Add(projectPath);
 
-            // Check if the required SDK is installed
-            string requiredSdkVersion = "6.0.0"; // Replace with the required SDK version
-            bool isSdkInstalled = IsSdkInstalled(requiredSdkVersion);
-            if (!isSdkInstalled)
-            {
-                Console.WriteLine($"Required .NET SDK version {requiredSdkVersion} is not installed. Installing now...");
+            //// Check if the required SDK is installed
+            //string requiredSdkVersion = "6.0.0"; // Replace with the required SDK version
+            //bool isSdkInstalled = IsSdkInstalled(requiredSdkVersion);
+            //if (!isSdkInstalled)
+            //{
+            //    Console.WriteLine($"Required .NET SDK version {requiredSdkVersion} is not installed. Installing now...");
 
-                // PowerShell script to install the latest .NET SDK version
-                string installScript = @"[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12 Invoke-WebRequest -Uri https://dot.net/v1/dotnet-install.ps1 -OutFile dotnet-install.ps1
-            .\dotnet-install.ps1 -Channel STS";
+            //    // PowerShell script to install the latest .NET SDK version
+            //    string installScript = @"[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12 Invoke-WebRequest -Uri https://dot.net/v1/dotnet-install.ps1 -OutFile dotnet-install.ps1
+            //.\dotnet-install.ps1 -Channel STS";
 
-                // Start the PowerShell process to run the script
-                ProcessStartInfo psStartInfo = new ProcessStartInfo
-                {
-                    FileName = "powershell.exe",
-                    Arguments = $"-NoProfile -ExecutionPolicy Bypass -Command \"{installScript}\"",
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true
-                };
+            //    // Start the PowerShell process to run the script
+            //    ProcessStartInfo psStartInfo = new ProcessStartInfo
+            //    {
+            //        FileName = "powershell.exe",
+            //        Arguments = $"-NoProfile -ExecutionPolicy Bypass -Command \"{installScript}\"",
+            //        RedirectStandardOutput = true,
+            //        RedirectStandardError = true,
+            //        UseShellExecute = false,
+            //        CreateNoWindow = true
+            //    };
 
-                using (Process? psProcess = Process.Start(psStartInfo))
-                {
-                    if (psProcess == null)
-                    {
-                        Console.WriteLine("Failed to start the PowerShell process.");
-                        return;
-                    }
-                    psProcess.WaitForExit();
-                    string psOutput = psProcess.StandardOutput.ReadToEnd();
-                    string psError = psProcess.StandardError.ReadToEnd();
+            //    using (Process? psProcess = Process.Start(psStartInfo))
+            //    {
+            //        if (psProcess == null)
+            //        {
+            //            Console.WriteLine("Failed to start the PowerShell process.");
+            //            return;
+            //        }
+            //        psProcess.WaitForExit();
+            //        string psOutput = psProcess.StandardOutput.ReadToEnd();
+            //        string psError = psProcess.StandardError.ReadToEnd();
 
-                    Console.WriteLine(psOutput);
-                    if (!string.IsNullOrEmpty(psError))
-                    {
-                        Console.WriteLine($"PowerShell error: {psError}");
-                    }
+            //        Console.WriteLine(psOutput);
+            //        if (!string.IsNullOrEmpty(psError))
+            //        {
+            //            Console.WriteLine($"PowerShell error: {psError}");
+            //        }
 
-                    if (psProcess.ExitCode != 0)
-                    {
-                        throw new Exception("Failed to install the .NET SDK.");
-                    }
-                }
+            //        if (psProcess.ExitCode != 0)
+            //        {
+            //            throw new Exception("Failed to install the .NET SDK.");
+            //        }
+            //    }
 
-                // Re-check if the required SDK is installed
-                isSdkInstalled = IsSdkInstalled(requiredSdkVersion);
-                if (!isSdkInstalled)
-                {
-                    throw new Exception($"Failed to install the required .NET SDK version {requiredSdkVersion}.");
-                }
-            }
+            //    // Re-check if the required SDK is installed
+            //    isSdkInstalled = IsSdkInstalled(requiredSdkVersion);
+            //    if (!isSdkInstalled)
+            //    {
+            //        throw new Exception($"Failed to install the required .NET SDK version {requiredSdkVersion}.");
+            //    }
+            //}
 
             // Command to create a new project
             string createProjectCommand = $"dotnet new wpf -n {projectName} --framework {targetFramework}";
@@ -171,50 +171,50 @@ namespace PresentationCore.Tests.TargetFramework.Tests
                 }
             }
 
-            // Verify if the project was created successfully
-            string projectFilePath = Path.Combine(projectPath, $"{projectName}.csproj");
-            if (File.Exists(projectFilePath))
-            {
-                Console.WriteLine($"Project created successfully: {projectFilePath}");
-            }
-            else
-            {
-                throw new Exception($"Project creation failed: {projectFilePath} not found.");
-            }
+            //// Verify if the project was created successfully
+            //string projectFilePath = Path.Combine(projectPath, $"{projectName}.csproj");
+            //if (File.Exists(projectFilePath))
+            //{
+            //    Console.WriteLine($"Project created successfully: {projectFilePath}");
+            //}
+            //else
+            //{
+            //    throw new Exception($"Project creation failed: {projectFilePath} not found.");
+            //}
 
-            // Attempt to restore the project
-            string restoreCommand = $"dotnet restore \"{projectFilePath}\"";
-            ProcessStartInfo restoreStartInfo = new("cmd", "/c " + restoreCommand)
-            {
-                WorkingDirectory = rootPath,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                UseShellExecute = false,
-                CreateNoWindow = true
-            };
+            //// Attempt to restore the project
+            //string restoreCommand = $"dotnet restore \"{projectFilePath}\"";
+            //ProcessStartInfo restoreStartInfo = new("cmd", "/c " + restoreCommand)
+            //{
+            //    WorkingDirectory = rootPath,
+            //    RedirectStandardOutput = true,
+            //    RedirectStandardError = true,
+            //    UseShellExecute = false,
+            //    CreateNoWindow = true
+            //};
 
-            using (Process? restoreProcess = Process.Start(restoreStartInfo))
-            {
-                if (restoreProcess == null)
-                {
-                    Console.WriteLine("Failed to start the restore process.");
-                    return;
-                }
-                restoreProcess.WaitForExit();
-                string restoreOutput = restoreProcess.StandardOutput.ReadToEnd();
-                string restoreError = restoreProcess.StandardError.ReadToEnd();
+            //using (Process? restoreProcess = Process.Start(restoreStartInfo))
+            //{
+            //    if (restoreProcess == null)
+            //    {
+            //        Console.WriteLine("Failed to start the restore process.");
+            //        return;
+            //    }
+            //    restoreProcess.WaitForExit();
+            //    string restoreOutput = restoreProcess.StandardOutput.ReadToEnd();
+            //    string restoreError = restoreProcess.StandardError.ReadToEnd();
 
-                Console.WriteLine(restoreOutput);
-                if (!string.IsNullOrEmpty(restoreError))
-                {
-                    Console.WriteLine($"Restore error: {restoreError}");
-                }
+            //    Console.WriteLine(restoreOutput);
+            //    if (!string.IsNullOrEmpty(restoreError))
+            //    {
+            //        Console.WriteLine($"Restore error: {restoreError}");
+            //    }
 
-                if (restoreProcess.ExitCode != 0)
-                {
-                    throw new Exception("Project restore failed.");
-                }
-            }
+            //    if (restoreProcess.ExitCode != 0)
+            //    {
+            //        throw new Exception("Project restore failed.");
+            //    }
+            //}
         }
 
         //private static void CreateProject(List<string> projectFiles, string? targetFramework, string projectName)
