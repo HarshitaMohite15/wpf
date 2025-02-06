@@ -1,0 +1,5 @@
+{
+  "appPath": "\\WPFProjectGenerator.exe",
+  "WpfProjectDirectory": "\\net10.0-windowsTFMProjects",
+  "latestTargetFramework": "net10.0-windows"
+}
